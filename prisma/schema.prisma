@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String    @id @default(uuid())
+  authUserId     String    @unique
+  name           String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  journeys       Journey[]
+}
+
+model Journey {
+  id          String         @id @default(uuid())
+  userId      String
+  name        String
+  startedAt   DateTime
+  finishedAt  DateTime
+  distanceKm  Float          @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  points      JourneyPoint[]
+
+  @@index([userId])
+  @@index([startedAt])
+}
+
+model JourneyPoint {
+  id          String    @id @default(uuid())
+  journeyId   String
+  latitude    Float
+  longitude   Float
+  recordedAt  DateTime
+
+  journey     Journey   @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+
+  @@index([journeyId])
+  @@index([recordedAt])
+}
