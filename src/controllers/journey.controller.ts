@@ -5,8 +5,8 @@ import { prisma } from "../lib/prisma";
 const createJourneySchema = z.object({
 	name: z.string().trim().min(1).max(200),
 	startedAt: z.coerce.date(),
-	finishedAt: z.coerce.date(),
-	distanceKm: z.number().finite().min(0).default(0),
+	finishedAt: z.iso.datetime().nullable().optional(),
+	distanceKm: z.number().min(0).default(0),
 });
 
 const updateJourneySchema = z
